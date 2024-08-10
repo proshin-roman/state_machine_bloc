@@ -1,4 +1,4 @@
-part of 'post_bloc.dart';
+part of 'post_state_machine.dart';
 
 abstract class PostEvent extends Equatable {
   const PostEvent();

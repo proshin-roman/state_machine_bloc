@@ -1,8 +1,8 @@
 import 'package:state_machine_bloc/state_machine_bloc.dart';
 
-part 'user_repository.dart';
 part 'login_event.dart';
 part 'login_state.dart';
+part 'user_repository.dart';
 
 class LoginStateMachine extends StateMachine<LoginEvent, LoginState> {
   LoginStateMachine({
@@ -22,12 +22,13 @@ class LoginStateMachine extends StateMachine<LoginEvent, LoginState> {
 
   final UserRepository userRepository;
 
-  TryLoggingIn _toTryLoggingIn(LoginFormSubmitted event, state) =>
+  Future<TryLoggingIn> _toTryLoggingIn(LoginFormSubmitted event, state) async =>
       TryLoggingIn(email: event.email, password: event.password);
 
-  LoginSuccess _toSuccess(e, s) => LoginSuccess();
+  Future<LoginSuccess> _toSuccess(e, s) async => LoginSuccess();
 
-  LoginError _toError(LoginFailed event, state) => LoginError(event.reason);
+  Future<LoginError> _toError(LoginFailed event, state) async =>
+      LoginError(event.reason);
 
   /// Use state's data to try login-in using the API
   Future<void> _login(TryLoggingIn state) async {

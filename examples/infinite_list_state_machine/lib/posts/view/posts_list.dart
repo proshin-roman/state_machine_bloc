@@ -18,7 +18,7 @@ class _PostsListState extends State<PostsList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PostBloc, PostState>(
+    return BlocBuilder<PostStateMachine, PostState>(
       builder: (context, state) {
         if (state is PostInitial)
           return const Center(child: CircularProgressIndicator());
@@ -52,7 +52,7 @@ class _PostsListState extends State<PostsList> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<PostBloc>().add(PostFetchRequested());
+    if (_isBottom) context.read<PostStateMachine>().add(PostFetchRequested());
   }
 
   bool get _isBottom {

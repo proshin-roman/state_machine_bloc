@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_timer_state_machine/ticker.dart';
-import 'package:flutter_timer_state_machine/timer/timer.dart';
 import 'package:flutter_timer_state_machine/timer/state_machine/timer_state_machine.dart';
+import 'package:flutter_timer_state_machine/timer/timer.dart';
 
 class TimerPage extends StatelessWidget {
   const TimerPage({Key? key}) : super(key: key);
@@ -52,7 +52,7 @@ class TimerText extends StatelessWidget {
     final secondsStr = (duration % 60).floor().toString().padLeft(2, '0');
     return Text(
       '$minutesStr:$secondsStr',
-      style: Theme.of(context).textTheme.headline1,
+      style: Theme.of(context).textTheme.headlineMedium,
     );
   }
 }

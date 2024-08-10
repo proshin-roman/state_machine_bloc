@@ -1,5 +1,6 @@
 import 'package:state_machine_bloc/state_machine_bloc.dart';
 import 'package:test/test.dart';
+
 import 'utils.dart';
 
 abstract class Event {}
@@ -45,15 +46,15 @@ class DummyStateMachine extends StateMachine<Event, State> {
               ..onEnter((_) => onEnterCalls.add("AChildState1"))
               ..onExit((_) => onExitCalls.add("AChildState1"))
               ..onChange((_, __) => onChangeCalls.add("AChildState1"))
-              ..on<TriggerNestedStateOnEnter>((e, s) => AChildState2())
-              ..on<TriggerNestedStateOnExit>((e, s) => ParentStateB()))
+              ..on<TriggerNestedStateOnEnter>((e, s) async => AChildState2())
+              ..on<TriggerNestedStateOnExit>((e, s) async => ParentStateB()))
 
             // Child State 2
             ..define<AChildState2>(($) => $
               ..onEnter((_) => onEnterCalls.add("AChildState2"))
               ..onExit((_) => onExitCalls.add("AChildState2"))
               ..onChange((_, __) => onChangeCalls.add("AChildState2"))
-              ..on<TriggerNestedStateOnChange>((e, s) => AChildState2()))
+              ..on<TriggerNestedStateOnChange>((e, s) async => AChildState2()))
 
             // Child State 3
             ..define<AChildState3>(($) => $

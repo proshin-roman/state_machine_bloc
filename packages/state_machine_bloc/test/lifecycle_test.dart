@@ -30,7 +30,7 @@ class DummyStateMachine extends StateMachine<Event, State> {
         ..onEnter((_) => onEnterCalls.add("StateA"))
         ..onExit((_) => onExitCalls.add("StateA"))
         ..onChange((_, __) => onChangeCalls.add("StateA"))
-        ..on<EventA>((_, __) => StateB()),
+        ..on<EventA>((_, __) async => StateB()),
     );
 
     define<StateB>(
@@ -38,7 +38,7 @@ class DummyStateMachine extends StateMachine<Event, State> {
         ..onEnter((_) => onEnterCalls.add("StateB"))
         ..onExit((_) => onExitCalls.add("StateB"))
         ..onChange((_, __) => onChangeCalls.add("StateB"))
-        ..on<TriggerStateOnChange>((_, __) => StateB()),
+        ..on<TriggerStateOnChange>((_, __) async => StateB()),
     );
   }
 

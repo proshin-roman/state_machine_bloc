@@ -3,7 +3,7 @@ gradle-wrapper.jar
 /captures/
 /gradlew
 /gradlew.bat
-/local.properties
+/examples/infinite_list_state_machine/local.properties
 GeneratedPluginRegistrant.java
 
 # Remember to never publicly share your keystore.

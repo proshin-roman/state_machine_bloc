@@ -54,7 +54,6 @@ abstract class StateMachine<Event, State> extends Bloc<Event, State> {
   /// {@macro state_machine}
   StateMachine(
     State initial, {
-
     /// Used to change how the state machine process incoming events.
     /// The default event transformer is [droppable] by default, meaning it
     /// processes only one event and ignores (drop) any new events until the
@@ -102,8 +101,7 @@ abstract class StateMachine<Event, State> extends Bloc<Event, State> {
   void define<DefinedState extends State>([
     StateDefinitionBuilder<Event, State, DefinedState> Function(
       StateDefinitionBuilder<Event, State, DefinedState>,
-    )?
-        definitionBuilder,
+    )? definitionBuilder,
   ]) {
     late final _StateDefinition definition;
     if (definitionBuilder != null) {
@@ -141,10 +139,10 @@ abstract class StateMachine<Event, State> extends Bloc<Event, State> {
     throw "Invalid use of StateMachine.on(). You should use StateMachine.define() instead.";
   }
 
-  void _mapEventToState(Event event, Emitter emit) {
+  void _mapEventToState(Event event, Emitter emit) async {
     final definition = _stateDefinitions.firstWhere((def) => def.isType(state));
 
-    final nextState = definition.add(event, state) as State?;
+    final nextState = (await definition.add(event, state)) as State?;
     if (nextState != null) {
       emit(nextState);
     }

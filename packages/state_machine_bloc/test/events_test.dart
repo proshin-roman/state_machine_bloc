@@ -28,26 +28,26 @@ class StateC extends State {}
 class DummyStateMachine extends StateMachine<Event, State> {
   DummyStateMachine([State? initial]) : super(initial ?? StateA()) {
     define<StateA>(($) => $
-      ..on((EventA e, s) {
+      ..on((EventA e, s) async {
         _onEvent(e);
         return StateB();
       })
-      ..on((EventA e, s) {
+      ..on((EventA e, s) async {
         _onEvent(e);
         return StateB();
       }));
     define<StateB>(($) => $
-      ..on((EventB e, s) {
+      ..on((EventB e, s) async {
         _onEvent(e);
         return StateA();
       }));
 
     define<StateC>(($) => $
-      ..on((EventC e, s) {
+      ..on((EventC e, s) async {
         _onEvent(e);
         return null;
       })
-      ..on((EventC e, s) {
+      ..on((EventC e, s) async {
         _onEvent(e);
         return StateA();
       }));

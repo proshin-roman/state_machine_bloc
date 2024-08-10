@@ -140,7 +140,7 @@ class MyStateMachine extends StateMachine<Event, State> {
       ..onExit((InitialState state) { /** ... **/ })
 
       // transition to OtherState when receiving SomeEvent
-      ..on<SomeEvent>((SomeEvent event, InitialState state) => OtherState())
+      ..on<SomeEvent>((SomeEvent event, InitialState state) async => OtherState())
     );
 
     // OtherState definition
@@ -186,9 +186,9 @@ If the returned state is not null, it is considered a _transition_ and the state
 class MyStateMachine extends StateMachine<Event, State> {
   MyStateMachine() : super(InitialState()) {
     define<InitialState>(($) => $
-      ..on<SomeEvent>((SomeEvent e, InitialState s) => null)
-      ..on<SomeEvent>((SomeEvent e, InitialState s) => SecondState())
-      ..on<OtherEvent>((SomeEvent e, InitialState s) => ThirdState())
+      ..on<SomeEvent>((SomeEvent e, InitialState s) async => null)
+      ..on<SomeEvent>((SomeEvent e, InitialState s) async => SecondState())
+      ..on<OtherEvent>((SomeEvent e, InitialState s) async => ThirdState())
     );
 
     define<SecondState>();

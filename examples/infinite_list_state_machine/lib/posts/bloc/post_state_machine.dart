@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:state_machine_bloc/state_machine_bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-import 'package:infinite_list_state_machine/posts/posts.dart';
 import 'package:http/http.dart' as http;
-import 'package:stream_transform/stream_transform.dart';
+import 'package:infinite_list_state_machine/posts/posts.dart';
+import 'package:state_machine_bloc/state_machine_bloc.dart';
 
 part 'post_event.dart';
 part 'post_state.dart';
@@ -20,8 +18,8 @@ const throttleDuration = Duration(milliseconds: 100);
 //   };
 // }
 
-class PostBloc extends StateMachine<PostEvent, PostState> {
-  PostBloc({required this.httpClient}) : super(const PostInitial()) {
+class PostStateMachine extends StateMachine<PostEvent, PostState> {
+  PostStateMachine({required this.httpClient}) : super(const PostInitial()) {
     define<PostInitial>((b) => b
       ..on<PostFetchRequested>(
         _transitToFetchInProgress,
@@ -46,16 +44,16 @@ class PostBloc extends StateMachine<PostEvent, PostState> {
 
   final http.Client httpClient;
 
-  PostFetchInProgress _transitToFetchInProgress(
+  Future<PostFetchInProgress> _transitToFetchInProgress(
     PostFetchRequested event,
     PostState state,
-  ) =>
+  ) async =>
       PostFetchInProgress(posts: state.posts);
 
-  PostState _onPostFetchSuccess(
+  Future<PostState> _onPostFetchSuccess(
     PostFetchSuccess event,
     PostFetchInProgress state,
-  ) {
+  ) async {
     if (event.posts.isNotEmpty) {
       return PostSuccess(posts: List.of(state.posts)..addAll(event.posts));
     } else {
@@ -63,10 +61,10 @@ class PostBloc extends StateMachine<PostEvent, PostState> {
     }
   }
 
-  PostError _onPostFetchError(
+  Future<PostError> _onPostFetchError(
     PostFetchError event,
     PostFetchInProgress state,
-  ) =>
+  ) async =>
       PostError(
         posts: state.posts,
         error: event.error,

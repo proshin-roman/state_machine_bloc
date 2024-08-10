@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_timer_state_machine/ticker.dart';
 import 'package:state_machine_bloc/state_machine_bloc.dart';
@@ -46,7 +47,7 @@ class TimerStateMachine extends StateMachine<TimerEvent, TimerState> {
     return super.close();
   }
 
-  TimerRunInProgress _onTimerStarted(TimerStarted event, _) {
+  Future<TimerRunInProgress> _onTimerStarted(TimerStarted event, _) async {
     _tickerSubscription?.cancel();
     _tickerSubscription = _ticker.tick(ticks: event.duration).listen(
       (duration) {
@@ -60,22 +61,25 @@ class TimerStateMachine extends StateMachine<TimerEvent, TimerState> {
     return TimerRunInProgress(event.duration);
   }
 
-  TimerRunPause _onPaused(TimerPaused event, TimerRunInProgress state) {
+  Future<TimerRunPause> _onPaused(
+      TimerPaused event, TimerRunInProgress state) async {
     _tickerSubscription?.pause();
     return TimerRunPause(state.duration);
   }
 
-  TimerRunInProgress _onResumed(TimerResumed resume, TimerRunPause state) {
+  Future<TimerRunInProgress> _onResumed(
+      TimerResumed resume, TimerRunPause state) async {
     _tickerSubscription?.resume();
     return TimerRunInProgress(state.duration);
   }
 
-  TimerInitial _onReset(TimerReset event, TimerRun state) {
+  Future<TimerInitial> _onReset(TimerReset event, TimerRun state) async {
     _tickerSubscription?.cancel();
     return TimerInitial(_duration);
   }
 
-  TimerRun _onTicked(TimerTicked event, TimerRunInProgress state) {
+  Future<TimerRun> _onTicked(
+      TimerTicked event, TimerRunInProgress state) async {
     return event.duration > 0
         ? TimerRunInProgress(event.duration)
         : TimerRunComplete();

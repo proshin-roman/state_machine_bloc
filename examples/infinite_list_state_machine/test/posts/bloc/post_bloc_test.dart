@@ -1,8 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:infinite_list_state_machine/posts/bloc/post_bloc.dart';
-import 'package:infinite_list_state_machine/posts/models/post.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:infinite_list_state_machine/posts/bloc/post_state_machine.dart';
+import 'package:infinite_list_state_machine/posts/models/post.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockClient extends Mock implements http.Client {}
@@ -33,19 +33,20 @@ void main() {
     });
 
     test('initial state is PostInitial()', () {
-      expect(PostBloc(httpClient: httpClient).state, const PostInitial());
+      expect(
+          PostStateMachine(httpClient: httpClient).state, const PostInitial());
     });
 
     group('PostFetched', () {
-      blocTest<PostBloc, PostState>(
+      blocTest<PostStateMachine, PostState>(
         'emits nothing when posts has reached maximum amount',
-        build: () => PostBloc(httpClient: httpClient),
+        build: () => PostStateMachine(httpClient: httpClient),
         seed: () => const PostEndReached(posts: []),
         act: (bloc) => bloc.add(PostFetchRequested()),
         expect: () => <PostState>[],
       );
 
-      blocTest<PostBloc, PostState>(
+      blocTest<PostStateMachine, PostState>(
         'emits successful status when http fetches initial posts',
         setUp: () {
           when(() => httpClient.get(any())).thenAnswer((_) async {
@@ -55,7 +56,7 @@ void main() {
             );
           });
         },
-        build: () => PostBloc(httpClient: httpClient),
+        build: () => PostStateMachine(httpClient: httpClient),
         act: (bloc) => bloc.add(PostFetchRequested()),
         expect: () => const <PostState>[
           PostFetchInProgress(
@@ -70,7 +71,7 @@ void main() {
         },
       );
 
-      blocTest<PostBloc, PostState>(
+      blocTest<PostStateMachine, PostState>(
         'drops new events when processing current event',
         setUp: () {
           when(() => httpClient.get(any())).thenAnswer((_) async {
@@ -80,7 +81,7 @@ void main() {
             );
           });
         },
-        build: () => PostBloc(httpClient: httpClient),
+        build: () => PostStateMachine(httpClient: httpClient),
         act: (bloc) => bloc
           ..add(PostFetchRequested())
           ..add(PostFetchRequested()),
@@ -97,7 +98,7 @@ void main() {
         },
       );
 
-      blocTest<PostBloc, PostState>(
+      blocTest<PostStateMachine, PostState>(
         'throttles events',
         setUp: () {
           when(() => httpClient.get(any())).thenAnswer((_) async {
@@ -108,7 +109,7 @@ void main() {
             );
           });
         },
-        build: () => PostBloc(httpClient: httpClient),
+        build: () => PostStateMachine(httpClient: httpClient),
         act: (bloc) async {
           bloc.add(PostFetchRequested());
           await Future<void>.delayed(Duration.zero);
@@ -127,14 +128,14 @@ void main() {
         },
       );
 
-      blocTest<PostBloc, PostState>(
+      blocTest<PostStateMachine, PostState>(
         'emits failure status when http fetches posts and throw exception',
         setUp: () {
           when(() => httpClient.get(any())).thenAnswer(
             (_) async => http.Response('', 500),
           );
         },
-        build: () => PostBloc(httpClient: httpClient),
+        build: () => PostStateMachine(httpClient: httpClient),
         act: (bloc) => bloc.add(PostFetchRequested()),
         expect: () => const <PostState>[
           PostFetchInProgress(
@@ -147,7 +148,7 @@ void main() {
         },
       );
 
-      blocTest<PostBloc, PostState>(
+      blocTest<PostStateMachine, PostState>(
         'emits successful status and reaches max posts when '
         '0 additional posts are fetched',
         setUp: () {
@@ -155,7 +156,7 @@ void main() {
             (_) async => http.Response('[]', 200),
           );
         },
-        build: () => PostBloc(httpClient: httpClient),
+        build: () => PostStateMachine(httpClient: httpClient),
         seed: () => const PostSuccess(
           posts: mockPosts,
         ),
@@ -173,7 +174,7 @@ void main() {
         },
       );
 
-      blocTest<PostBloc, PostState>(
+      blocTest<PostStateMachine, PostState>(
         'emits successful status and does not reach max posts'
         'when additional posts are fetched',
         setUp: () {
@@ -184,7 +185,7 @@ void main() {
             );
           });
         },
-        build: () => PostBloc(httpClient: httpClient),
+        build: () => PostStateMachine(httpClient: httpClient),
         seed: () => const PostSuccess(
           posts: mockPosts,
         ),
